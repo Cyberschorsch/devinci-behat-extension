@@ -18,11 +18,11 @@ class JavascriptContext extends RawMinkContext {
     $this->maximum_wait = $maximum_wait ? $maximum_wait : '30';
     // @todo We should give a warning that if you don't use a JS driver, this function
     // probably doesn't make sense.
-   // $driver = $this->getSession()->getDriver();
-   // if (!($driver instanceof Selenium2Driver)) {
-   //   $driver = get_class($driver);
-   //   print "Warning: $driver may not be supported by JavascriptContext.";
-   // }
+    // $driver = $this->getSession()->getDriver();
+    // if (!($driver instanceof Selenium2Driver)) {
+    //   $driver = get_class($driver);
+    //   print "Warning: $driver may not be supported by JavascriptContext.";
+    // }
   }
 
   /**
@@ -54,20 +54,40 @@ class JavascriptContext extends RawMinkContext {
    * @Then I wait for :text
    * @Then I wait for :text up to :wait seconds$/
    */
-   function iWaitFor($text, $wait = -1) {
-     $wait = ($wait < 0 ) ? $this->maximum_wait : $wait;
-     try {
-       $found = $this->spin(function ($context) use ($text) {
-         $this->assertSession()
-           ->pageTextContains($this->fixStepArgument($text));
-         return (TRUE);
-       }, $wait);
-       return $found;
-     }
-     catch(\Exception $e) {
-       throw new \Exception( "Couldn't find $text within $wait seconds");
-     }
-   }
+  function iWaitFor($text, $wait = -1) {
+    $wait = ($wait < 0 ) ? $this->maximum_wait : $wait;
+    try {
+      $found = $this->spin(function ($context) use ($text) {
+        $this->assertSession()
+          ->pageTextContains($this->fixStepArgument($text));
+        return (TRUE);
+      }, $wait);
+      return $found;
+    }
+    catch(\Exception $e) {
+      throw new \Exception( "Couldn't find $text within $wait seconds");
+    }
+  }
+
+  /**
+   * @Then I wait for element :arg1
+   * @Then I wait for element :text up to :wait seconds$/
+   */
+  public function iWaitForElement($name, $wait = -1)
+  {
+    $wait = ($wait < 0 ) ? $this->maximum_wait : $wait;
+    try {
+      $found = $this->spin(function ($context) use ($name) {
+        $this->assertSession()
+          ->fieldExists($name);
+        return (TRUE);
+      }, $wait);
+      return $found;
+    }
+    catch(\Exception $e) {
+      throw new \Exception( "Couldn't find $name within $wait seconds");
+    }
+  }
 
 
   /**
