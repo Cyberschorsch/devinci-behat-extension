@@ -133,7 +133,7 @@ class DebugContext extends RawMinkContext {
       $filename = $this->lastStep->getText();
     }
     $driver = $this->getSession()->getDriver();
-    if ($driver instanceof Selenium2Driver) {
+    if ($driver instanceof Selenium2Driver || $driver instanceof ChromeDriver) {
       $screenshot = $driver->getScreenshot();
       $this->dumpAsset('screenshot', $this->lastStep->getText(), 'png', $screenshot);
     }
